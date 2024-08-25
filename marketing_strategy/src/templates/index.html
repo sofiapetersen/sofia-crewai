@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Strategy Interface</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Marketing Strategy Form</h1>
+        </div>
+        <form id="strategy-form">
+            <div class="form-group">
+                <label for="customer_domain">Customer Domain:</label>
+                <input type="text" id="customer_domain" name="customer_domain" required>
+            </div>
+            <div class="form-group">
+                <label for="project_description">Project Description:</label>
+                <textarea id="project_description" name="project_description" required></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+        <div class="message success" id="success-message" style="display: none;">
+        </div>
+        <div class="message error" id="error-message" style="display: none;">
+        </div>
+        <div class="result" id="result" style="display: none;">
+            <h2>Processed Output:</h2>
+            <p id="output-content"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('strategy-form').addEventListener('submit', async function(event) {
+            event.preventDefault(); 
+
+            // Obtém os dados do formulário
+            const formData = new FormData(this);
+
+            try {
+                // Envia os dados para o servidor
+                const response = await fetch('/run', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                // Mostra mensagem de sucesso ou erro
+                if (result.success) {
+                    document.getElementById('success-message').style.display = 'block';
+                    document.getElementById('success-message').textContent = 'Request processed successfully!';
+                    document.getElementById('result').style.display = 'block';
+                    document.getElementById('output-content').textContent = result.output;
+                } else {
+                    document.getElementById('error-message').style.display = 'block';
+                    document.getElementById('error-message').textContent = 'An error occurred: ' + result.error;
+                }
+            } catch (error) {
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').textContent = 'An error occurred: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
